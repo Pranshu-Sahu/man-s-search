@@ -1,0 +1,15 @@
+---
+// ChapterHeader.astro — Chapter label in Patrick Hand, title in Caveat, hand-drawn divider
+interface Props {
+  chapterLabel: string;
+  title: string;
+}
+
+const { chapterLabel, title } = Astro.props;
+---
+
+<header class="chapter-header">
+  <span class="chapter-label">{chapterLabel}</span>
+  <h1 class="chapter-title">{title}</h1>
+  <div class="chapter-divider"></div>
+</header>

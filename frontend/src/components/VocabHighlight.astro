@@ -1,0 +1,10 @@
+---
+// VocabHighlight.astro — Inline highlighted vocabulary word
+interface Props {
+  word: string;
+}
+
+const { word } = Astro.props;
+---
+
+<span class="vocab-highlight">{word}</span>

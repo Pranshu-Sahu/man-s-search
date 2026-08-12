@@ -1,0 +1,134 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+}
+
+const { currentPage, totalPages } = Astro.props;
+
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+---
+
+<nav class="pagination-bar" aria-label="Page navigation">
+  <a
+    class={`pagination-btn ${!prevPage ? 'disabled' : ''}`}
+    href={prevPage ? `?page=${prevPage}` : '#'}
+    id="btn-prev-page"
+    aria-label="Previous Page"
+  >
+    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+    Previous
+  </a>
+
+  <div class="pagination-center">
+    <span class="pagination-label">Page</span>
+    <select id="page-select" class="pagination-select" aria-label="Select Page">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        <option value={p} selected={p === currentPage}>
+          {p}
+        </option>
+      ))}
+    </select>
+    <span class="pagination-label">of {totalPages}</span>
+  </div>
+
+  <a
+    class={`pagination-btn ${!nextPage ? 'disabled' : ''}`}
+    href={nextPage ? `?page=${nextPage}` : '#'}
+    id="btn-next-page"
+    aria-label="Next Page"
+  >
+    Next
+    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+  </a>
+</nav>
+
+<style>
+  .pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0 12px;
+    margin-top: 32px;
+    border-top: 1px dashed var(--outline-variant);
+    font-family: var(--font-cursive);
+  }
+
+  .pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--rounded-full);
+    background-color: var(--surface-container-low);
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all var(--transition-default);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pagination-btn:hover:not(.disabled) {
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+    transform: translateY(-1px);
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .pagination-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    color: var(--on-surface);
+  }
+
+  .pagination-select {
+    font-family: var(--font-cursive);
+    font-size: 18px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--outline-variant);
+    background-color: var(--surface-bright);
+    color: var(--on-surface);
+    cursor: pointer;
+  }
+
+  .pagination-select:focus {
+    outline: 2px solid var(--primary);
+  }
+</style>
+
+<script>
+  // Enable instant dropdown navigation
+  const pageSelect = document.getElementById('page-select') as HTMLSelectElement;
+  if (pageSelect) {
+    pageSelect.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      window.location.href = `?page=${val}`;
+    });
+  }
+
+  // Support Keyboard Left/Right Arrow Navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      const prevBtn = document.getElementById('btn-prev-page') as HTMLAnchorElement;
+      if (prevBtn && !prevBtn.classList.contains('disabled')) {
+        prevBtn.click();
+      }
+    } else if (e.key === 'ArrowRight') {
+      const nextBtn = document.getElementById('btn-next-page') as HTMLAnchorElement;
+      if (nextBtn && !nextBtn.classList.contains('disabled')) {
+        nextBtn.click();
+      }
+    }
+  });
+</script>

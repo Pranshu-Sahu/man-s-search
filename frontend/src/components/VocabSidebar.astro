@@ -1,0 +1,80 @@
+---
+import type { VocabItem } from '../utils/textProcessor';
+
+interface Props {
+  entries: VocabItem[];
+}
+
+const { entries } = Astro.props;
+
+const colorMap: Record<string, string> = {
+  yellow: 'sticky-note-yellow',
+  blue: 'sticky-note-blue',
+  pink: 'sticky-note-pink',
+  green: 'sticky-note-green',
+  orange: 'sticky-note-orange',
+};
+
+const defaultColors = ['yellow', 'blue', 'pink', 'green', 'orange'];
+---
+
+<aside class="vocab-sidebar" id="vocab-sidebar">
+  <div class="vocab-sidebar-inner">
+    {entries.length === 0 ? (
+      <div class="sticky-note sticky-note-yellow" style="opacity: 0.8;">
+        <span class="sticky-note-word">No Vocabulary</span>
+        <span class="sticky-note-definition">Standard vocabulary for this page. Enjoy your reading!</span>
+      </div>
+    ) : (
+      entries.map((entry, i) => {
+        const color = defaultColors[i % defaultColors.length];
+        return (
+          <div 
+            class={`sticky-note ${colorMap[color]}`} 
+            data-vocab-index={i}
+            id={`note-${i}`}
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span class="sticky-note-word">{entry.text_form || entry.base_form}</span>
+              {entry.cefr_level && (
+                <span class="sticky-note-badge">{entry.cefr_level}</span>
+              )}
+            </div>
+            <span class="sticky-note-definition">
+              {entry.contextual_definition || entry.general_definition}
+            </span>
+            {entry.sample_sentence && (
+              <span class="sticky-note-sentence">
+                "{entry.sample_sentence}"
+              </span>
+            )}
+          </div>
+        );
+      })
+    )}
+  </div>
+</aside>
+
+<style>
+  .sticky-note-badge {
+    font-family: var(--font-label);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: var(--rounded-xl);
+    background-color: rgba(27, 28, 21, 0.1);
+    color: var(--on-surface);
+  }
+
+  .sticky-note-sentence {
+    font-family: var(--font-cursive);
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(27, 28, 21, 0.15);
+    opacity: 0.85;
+    line-height: 1.3;
+  }
+</style>

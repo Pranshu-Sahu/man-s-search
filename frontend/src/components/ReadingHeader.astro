@@ -1,0 +1,32 @@
+---
+interface Props {
+  currentPage?: number;
+  totalPages?: number;
+}
+
+const { currentPage = 1, totalPages = 135 } = Astro.props;
+const progressPercent = Math.round((currentPage / totalPages) * 100);
+---
+
+<header class="reading-header" id="reading-header">
+  <div class="header-content">
+    <a class="header-back-link" href="#">
+      <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+      Man's Search for Meaning
+    </a>
+
+    <div style="display: flex; align-items: center; gap: var(--space-md);">
+      <span class="header-page-info" style="font-family: var(--font-cursive); font-size: 16px; color: var(--secondary);">
+        Page {currentPage} of {totalPages} ({progressPercent}%)
+      </span>
+      <button class="header-icon-btn" aria-label="Reading settings">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Reading Progress Bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-bar" style={`width: ${progressPercent}%;`}></div>
+  </div>
+</header>

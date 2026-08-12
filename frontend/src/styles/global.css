@@ -1,0 +1,522 @@
+/* ============================================================
+   Aetheria Reading System — Global Design Tokens & Styles
+   "Scrapbook / Handwritten Library" aesthetic
+   ============================================================ */
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;600&family=Caveat:wght@400..700&family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+/* --- CSS Custom Properties --- */
+:root {
+  /* Surface Colors */
+  --surface: #fbfaee;
+  --surface-dim: #dbdbcf;
+  --surface-bright: #fbfaee;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f5f4e8;
+  --surface-container: #efeee3;
+  --surface-container-high: #e9e9dd;
+  --surface-container-highest: #e4e3d7;
+  --on-surface: #1b1c15;
+  --on-surface-variant: #474740;
+  --inverse-surface: #303129;
+  --inverse-on-surface: #f2f1e5;
+
+  /* Outline */
+  --outline: #78776f;
+  --outline-variant: #c8c7bd;
+  --surface-tint: #5f5f57;
+
+  /* Primary */
+  --primary: #44453d;
+  --on-primary: #ffffff;
+  --primary-container: #5c5c54;
+  --on-primary-container: #d6d4ca;
+  --inverse-primary: #c8c7bd;
+
+  /* Secondary */
+  --secondary: #655d51;
+  --on-secondary: #ffffff;
+  --secondary-container: #e9decf;
+  --on-secondary-container: #696255;
+
+  /* Tertiary */
+  --tertiary: #484346;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #605a5e;
+  --on-tertiary-container: #dbd2d7;
+
+  /* Error */
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  /* Background */
+  --background: #f5f4e8;
+  --on-background: #1b1c15;
+  --surface-variant: #e4e3d7;
+
+  /* Sticky Note Colors */
+  --note-yellow: #fef08a;
+  --note-blue: #e0f2fe;
+  --note-pink: #fce7f3;
+  --note-green: #dcfce7;
+  --note-orange: #ffedd5;
+
+  /* Highlighter */
+  --highlight-yellow: rgba(254, 240, 138, 0.4);
+
+  /* Typography */
+  --font-headline: 'Source Serif 4', serif;
+  --font-body: 'Be Vietnam Pro', sans-serif;
+  --font-label: 'Be Vietnam Pro', sans-serif;
+  --font-cursive: 'Patrick Hand', cursive;
+  --font-cursive-display: 'Caveat', cursive;
+
+  /* Spacing (4px baseline) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --margin-mobile: 20px;
+  --margin-desktop: 64px;
+
+  /* Border Radius */
+  --rounded-sm: 0.25rem;
+  --rounded: 0.5rem;
+  --rounded-md: 0.75rem;
+  --rounded-lg: 1rem;
+  --rounded-xl: 1.5rem;
+  --rounded-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease-out;
+  --transition-default: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
+
+  /* Shadows */
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* --- Reset & Base --- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-cursive);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Subtle paper grain texture */
+  background-image: radial-gradient(var(--outline-variant) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* --- Reading Header --- */
+.reading-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  transition: all var(--transition-slow);
+}
+
+.header-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  background-color: rgba(251, 250, 238, 0.9);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.header-content:hover,
+.header-content:focus-within {
+  opacity: 1;
+}
+
+.header-back-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--secondary);
+  text-decoration: none;
+  font-family: var(--font-label);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transition: color var(--transition-default);
+}
+
+.header-back-link:hover {
+  color: var(--primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.header-icon-btn {
+  background: none;
+  border: none;
+  color: var(--secondary);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--rounded);
+  transition: color var(--transition-default),
+              background-color var(--transition-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon-btn:hover {
+  color: var(--primary);
+  background-color: var(--surface-container);
+}
+
+/* Progress Bar */
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background-color: var(--surface-variant);
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  width: 0%;
+  transition: width var(--transition-fast);
+  transform-origin: left;
+}
+
+/* --- Main Reading Layout --- */
+.reading-main {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  padding: 32px var(--margin-mobile) 48px;
+  min-height: calc(100vh - 60px);
+}
+
+@media (min-width: 768px) {
+  .reading-main {
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 40px;
+  }
+}
+
+.reading-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+@media (min-width: 900px) {
+  .reading-layout {
+    flex-direction: row;
+  }
+}
+
+/* --- Scrapbook Paper Effect --- */
+.scrapbook-paper {
+  background-color: var(--surface-bright);
+  box-shadow: var(--shadow-card);
+  border-radius: 4px;
+  padding: 40px 48px;
+  transform: rotate(-0.2deg);
+  transition: transform var(--transition-slow);
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .scrapbook-paper {
+    padding: 24px 18px;
+    transform: none;
+  }
+}
+
+/* --- Article / Reading Area --- */
+.reading-article {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* --- Chapter Header --- */
+.chapter-header {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.chapter-label {
+  font-family: var(--font-cursive);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: var(--space-xs);
+  display: block;
+}
+
+.chapter-title {
+  font-family: var(--font-cursive-display);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--on-surface);
+}
+
+@media (min-width: 768px) {
+  .chapter-title {
+    font-size: 48px;
+  }
+}
+
+.chapter-divider {
+  width: 96px;
+  height: 2px;
+  background-color: var(--outline-variant);
+  opacity: 0.5;
+  margin: 24px auto 0;
+  border-radius: var(--rounded-full);
+  transform: rotate(1deg);
+}
+
+/* --- Reading Text --- */
+.reading-text {
+  font-family: var(--font-cursive);
+  font-size: 22px;
+  line-height: 1.65;
+  color: var(--primary);
+}
+
+.reading-text p {
+  margin-bottom: 1.5rem;
+  text-indent: 1.5rem;
+}
+
+.reading-text p:first-of-type {
+  text-indent: 0;
+}
+
+.first-letter-cap::first-letter {
+  font-size: 4rem;
+  font-weight: 600;
+  line-height: 1;
+  float: left;
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
+  color: var(--on-surface);
+}
+
+/* --- Vocabulary Highlight (yellow highlighter) --- */
+.vocab-highlight {
+  background-color: var(--highlight-yellow);
+  padding: 0 4px;
+  border-radius: var(--rounded-sm);
+  border-bottom: 2px solid rgba(101, 93, 81, 0.2);
+  cursor: help;
+  color: var(--on-surface);
+  display: inline-block;
+  transition: background-color var(--transition-default),
+              border-color var(--transition-default),
+              transform var(--transition-default);
+}
+
+.vocab-highlight:hover {
+  background-color: rgba(254, 240, 138, 0.6);
+  border-bottom-color: rgba(101, 93, 81, 0.45);
+}
+
+.vocab-highlight-rotate-neg {
+  transform: rotate(-1deg);
+}
+
+.vocab-highlight-rotate-pos {
+  transform: rotate(1deg);
+}
+
+/* --- Vocabulary Sidebar (Sticky Notes) --- */
+#vocab-sidebar-container {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  #vocab-sidebar-container {
+    width: 300px;
+    flex-shrink: 0;
+  }
+}
+
+.vocab-sidebar {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.vocab-sidebar-inner {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sticky Note Base */
+.sticky-note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: 16px;
+  border-radius: 2px;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-slow);
+  cursor: default;
+}
+
+.sticky-note:hover {
+  transform: rotate(0deg) !important;
+}
+
+.sticky-note-yellow {
+  background-color: var(--note-yellow);
+  transform: rotate(2deg);
+}
+
+.sticky-note-blue {
+  background-color: var(--note-blue);
+  transform: rotate(-1deg);
+}
+
+.sticky-note-pink {
+  background-color: var(--note-pink);
+  transform: rotate(1deg);
+}
+
+.sticky-note-green {
+  background-color: var(--note-green);
+  transform: rotate(-2deg);
+}
+
+.sticky-note-orange {
+  background-color: var(--note-orange);
+  transform: rotate(1.5deg);
+}
+
+.sticky-note-word {
+  font-family: var(--font-cursive-display);
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--on-surface);
+}
+
+.sticky-note-definition {
+  font-family: var(--font-cursive);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--on-surface);
+  opacity: 0.8;
+}
+
+/* --- Page Footer --- */
+.page-footer {
+  margin-top: 96px;
+  text-align: center;
+  padding-bottom: 16px;
+}
+
+.page-number {
+  font-family: var(--font-cursive);
+  font-size: 20px;
+  color: var(--outline);
+  opacity: 0.6;
+}
+
+/* --- Material Symbols --- */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* --- Scrollbar Styling --- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--outline-variant);
+  border-radius: var(--rounded-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--outline);
+}
+
+/* --- Utility --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
