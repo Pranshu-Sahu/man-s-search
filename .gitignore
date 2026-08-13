@@ -19,3 +19,8 @@ __pycache__/
 # System / IDE
 .DS_Store
 .vscode/
+
+# Local data & temporary files not needed for Vercel deployment
+progress.json
+stitch_the_handwritten_library (1)/
+*.pdf
