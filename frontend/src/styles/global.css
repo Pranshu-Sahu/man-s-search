@@ -381,86 +381,140 @@ button {
   transform: rotate(1deg);
 }
 
-/* --- Vocabulary Sidebar (Sticky Notes) --- */
-#vocab-sidebar-container {
-  width: 100%;
+/* --- Vocabulary Modal --- */
+#vocab-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background-color: rgba(27, 28, 21, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  animation: modal-fade-in var(--transition-default) forwards;
 }
 
-@media (min-width: 900px) {
-  #vocab-sidebar-container {
-    width: 300px;
-    flex-shrink: 0;
-  }
+#vocab-modal-overlay.is-open {
+  display: flex;
 }
 
-.vocab-sidebar {
-  display: block;
-  width: 100%;
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.vocab-modal-card {
   position: relative;
+  max-width: 420px;
+  width: 100%;
+  border-radius: var(--rounded-lg);
+  padding: 28px 28px 24px;
+  box-shadow: 0 20px 60px rgba(27, 28, 21, 0.25), 0 4px 12px rgba(27, 28, 21, 0.1);
+  animation: modal-slide-up var(--transition-slow) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: bottom center;
 }
 
-.vocab-sidebar-inner {
-  position: sticky;
-  top: 80px;
+@keyframes modal-slide-up {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* Sticky Note colour variants (reused as modal card backgrounds) */
+.modal-yellow { background-color: var(--note-yellow); }
+.modal-blue   { background-color: var(--note-blue);   }
+.modal-pink   { background-color: var(--note-pink);   }
+.modal-green  { background-color: var(--note-green);  }
+.modal-orange { background-color: var(--note-orange); }
+
+.vocab-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--on-surface);
+  opacity: 0.5;
+  padding: 4px;
+  border-radius: var(--rounded);
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Sticky Note Base */
-.sticky-note {
+.vocab-modal-close:hover {
+  opacity: 1;
+  background-color: rgba(27, 28, 21, 0.08);
+}
+
+.vocab-modal-header {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: 16px;
-  border-radius: 2px;
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-slow);
-  cursor: default;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: 12px;
 }
 
-.sticky-note:hover {
-  transform: rotate(0deg) !important;
-}
-
-.sticky-note-yellow {
-  background-color: var(--note-yellow);
-  transform: rotate(2deg);
-}
-
-.sticky-note-blue {
-  background-color: var(--note-blue);
-  transform: rotate(-1deg);
-}
-
-.sticky-note-pink {
-  background-color: var(--note-pink);
-  transform: rotate(1deg);
-}
-
-.sticky-note-green {
-  background-color: var(--note-green);
-  transform: rotate(-2deg);
-}
-
-.sticky-note-orange {
-  background-color: var(--note-orange);
-  transform: rotate(1.5deg);
-}
-
-.sticky-note-word {
+.vocab-modal-word {
   font-family: var(--font-cursive-display);
-  font-weight: 600;
-  font-size: 24px;
+  font-weight: 700;
+  font-size: 32px;
   color: var(--on-surface);
+  line-height: 1.1;
 }
 
-.sticky-note-definition {
-  font-family: var(--font-cursive);
-  font-size: 16px;
-  line-height: 1.4;
+.vocab-modal-badge {
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: var(--rounded-full);
+  background-color: rgba(27, 28, 21, 0.12);
   color: var(--on-surface);
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.vocab-modal-category {
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 10px;
   opacity: 0.8;
+}
+
+.vocab-modal-divider {
+  width: 48px;
+  height: 2px;
+  background-color: rgba(27, 28, 21, 0.2);
+  border-radius: var(--rounded-full);
+  margin-bottom: 14px;
+}
+
+.vocab-modal-definition {
+  font-family: var(--font-cursive);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--on-surface);
+  margin-bottom: 14px;
+}
+
+.vocab-modal-sentence {
+  font-family: var(--font-cursive);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--on-surface);
+  opacity: 0.75;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(27, 28, 21, 0.2);
 }
 
 /* --- Page Footer --- */

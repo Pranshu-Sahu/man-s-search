@@ -2,7 +2,6 @@
 import ReadingLayout from '../layouts/ReadingLayout.astro';
 import ReadingHeader from '../components/ReadingHeader.astro';
 import ChapterHeader from '../components/ChapterHeader.astro';
-import VocabSidebar from '../components/VocabSidebar.astro';
 import PageFooter from '../components/PageFooter.astro';
 import PaginationControls from '../components/PaginationControls.astro';
 
@@ -39,13 +38,25 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
           <PageFooter pageNumber={1} />
         </div>
       </article>
-
-      <!-- Dynamic Sticky Notes Sidebar -->
-      <div id="vocab-sidebar-container">
-        <VocabSidebar entries={activeVocab} />
-      </div>
     </div>
   </main>
+
+  <!-- Vocabulary Modal -->
+  <div id="vocab-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-word">
+    <div class="vocab-modal-card modal-yellow" id="vocab-modal-card">
+      <button class="vocab-modal-close" id="vocab-modal-close" aria-label="Close">
+        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+      </button>
+      <div class="vocab-modal-header">
+        <span class="vocab-modal-word" id="modal-word"></span>
+        <span class="vocab-modal-badge" id="modal-badge"></span>
+      </div>
+      <div class="vocab-modal-category" id="modal-category"></div>
+      <div class="vocab-modal-divider"></div>
+      <p class="vocab-modal-definition" id="modal-definition"></p>
+      <p class="vocab-modal-sentence" id="modal-sentence"></p>
+    </div>
+  </div>
 </ReadingLayout>
 
 <!-- Client-side script for instant 135-page switching & strict highlighting -->
@@ -55,14 +66,6 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
   import { formatPageContent, type VocabItem } from '../utils/textProcessor';
 
   const totalPages = rawPagesData.length;
-  const defaultColors = ['yellow', 'blue', 'pink', 'green', 'orange'];
-  const colorMap: Record<string, string> = {
-    yellow: 'sticky-note-yellow',
-    blue: 'sticky-note-blue',
-    pink: 'sticky-note-pink',
-    green: 'sticky-note-green',
-    orange: 'sticky-note-orange',
-  };
 
   function getPageNumberFromUrl(): number {
     const params = new URLSearchParams(window.location.search);
@@ -74,7 +77,7 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
     const pageObj = rawPagesData[pageNum - 1] || rawPagesData[0];
     const pageVocab = (rawVocabData as VocabItem[]).filter(v => v.page_number === pageNum);
 
-    // 1. STRICT HIGHLIGHTING: Only words present in pageVocab get highlighted in yellow
+    // 1. STRICT HIGHLIGHTING: Only words present in pageVocab get highlighted
     const htmlContent = formatPageContent(pageObj.text, pageVocab);
 
     // 2. Update Book Content
@@ -146,83 +149,51 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
       pageSelect.value = String(pageNum);
     }
 
-    // 7. Update Sticky Notes Sidebar
-    const sidebarContainer = document.getElementById('vocab-sidebar-container');
-    if (sidebarContainer) {
-      if (pageVocab.length === 0) {
-        sidebarContainer.innerHTML = `
-          <aside class="vocab-sidebar" id="vocab-sidebar" style="display: block;">
-            <div class="vocab-sidebar-inner">
-              <div class="sticky-note sticky-note-yellow" style="opacity: 0.8;">
-                <span class="sticky-note-word">No Vocabulary</span>
-                <span class="sticky-note-definition">Standard vocabulary for this page. Enjoy your reading!</span>
-              </div>
-            </div>
-          </aside>
-        `;
-      } else {
-        const notesHtml = pageVocab.map((entry, i) => {
-          const color = defaultColors[i % defaultColors.length];
-          const textForm = entry.text_form || entry.base_form;
-          const def = entry.contextual_definition || entry.general_definition;
-          const sentence = entry.sample_sentence ? `<span class="sticky-note-sentence">"${entry.sample_sentence}"</span>` : '';
-          const badge = entry.cefr_level ? `<span class="sticky-note-badge">${entry.cefr_level}</span>` : '';
-
-          return `
-            <div class="sticky-note ${colorMap[color]}" data-vocab-index="${i}" id="note-${i}">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span class="sticky-note-word">${textForm}</span>
-                ${badge}
-              </div>
-              <span class="sticky-note-definition">${def}</span>
-              ${sentence}
-            </div>
-          `;
-        }).join('');
-
-        sidebarContainer.innerHTML = `
-          <aside class="vocab-sidebar" id="vocab-sidebar" style="display: block;">
-            <div class="vocab-sidebar-inner">
-              ${notesHtml}
-            </div>
-          </aside>
-        `;
-      }
-    }
-
-    // 8. Rebind Interactivity (word <-> note click focus)
-    bindInteractivity();
+    // 7. Rebind word click -> modal
+    bindInteractivity(pageVocab);
   }
 
-  function bindInteractivity() {
+  // --- Modal helpers ---
+  const modalColors = ['modal-yellow', 'modal-blue', 'modal-pink', 'modal-green', 'modal-orange'];
+
+  function openModal(vocabItem: VocabItem, colorIndex: number) {
+    const overlay = document.getElementById('vocab-modal-overlay')!;
+    const card    = document.getElementById('vocab-modal-card')!;
+
+    (document.getElementById('modal-word')       as HTMLElement).textContent = vocabItem.text_form || vocabItem.base_form;
+    (document.getElementById('modal-badge')      as HTMLElement).textContent = vocabItem.cefr_level || '';
+    (document.getElementById('modal-category')   as HTMLElement).textContent = (vocabItem.category || '').replace(/_/g, ' ');
+    (document.getElementById('modal-definition') as HTMLElement).textContent = vocabItem.contextual_definition || vocabItem.general_definition;
+
+    const sentenceEl = document.getElementById('modal-sentence') as HTMLElement;
+    if (vocabItem.sample_sentence) {
+      sentenceEl.textContent = `"${vocabItem.sample_sentence}"`;
+      sentenceEl.style.display = '';
+    } else {
+      sentenceEl.style.display = 'none';
+    }
+
+    // Cycle card colour
+    card.className = `vocab-modal-card ${modalColors[colorIndex % modalColors.length]}`;
+
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    const overlay = document.getElementById('vocab-modal-overlay')!;
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  function bindInteractivity(pageVocab: VocabItem[]) {
     const marks = document.querySelectorAll('.vocab-highlight');
-    const notes = document.querySelectorAll('.sticky-note');
 
     marks.forEach(mark => {
       mark.addEventListener('click', () => {
-        const idx = mark.getAttribute('data-vocab-index');
-        if (idx !== null) {
-          const targetNote = document.getElementById(`note-${idx}`);
-          if (targetNote) {
-            targetNote.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            targetNote.classList.add('note-focused');
-            setTimeout(() => targetNote.classList.remove('note-focused'), 2000);
-          }
-        }
-      });
-    });
-
-    notes.forEach(note => {
-      note.addEventListener('click', () => {
-        const idx = note.getAttribute('data-vocab-index');
-        if (idx !== null) {
-          const targetMark = document.querySelector(`.vocab-highlight[data-vocab-index="${idx}"]`);
-          if (targetMark) {
-            targetMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            targetMark.classList.add('mark-focused');
-            setTimeout(() => targetMark.classList.remove('mark-focused'), 2000);
-          }
-        }
+        const idx = parseInt(mark.getAttribute('data-vocab-index') || '0', 10);
+        const entry = pageVocab[idx];
+        if (entry) openModal(entry, idx);
       });
     });
   }
@@ -245,6 +216,17 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
   document.addEventListener('DOMContentLoaded', () => {
     const initialPage = getPageNumberFromUrl();
     renderPage(initialPage);
+
+    // Close modal on overlay click or close button
+    document.getElementById('vocab-modal-overlay')!.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).id === 'vocab-modal-overlay') closeModal();
+    });
+    document.getElementById('vocab-modal-close')!.addEventListener('click', closeModal);
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
 
     // Page dropdown select listener
     const pageSelect = document.getElementById('page-select') as HTMLSelectElement;
@@ -288,17 +270,3 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
     });
   });
 </script>
-
-<style is:global>
-  .note-focused {
-    transform: scale(1.08) rotate(0deg) !important;
-    outline: 2px solid var(--primary);
-    box-shadow: var(--shadow-lg) !important;
-    z-index: 10;
-  }
-
-  .mark-focused {
-    background-color: rgba(254, 240, 138, 0.95) !important;
-    transform: scale(1.05);
-  }
-</style>
