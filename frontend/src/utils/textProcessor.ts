@@ -28,10 +28,7 @@ export function formatPageContent(rawText: string, vocabList: VocabItem[]): stri
     .filter(p => p.length > 0);
 
   if (vocabList.length === 0) {
-    return rawParagraphs.map((p, idx) => {
-      const cls = idx === 0 ? 'first-letter-cap' : '';
-      return `<p class="${cls}">${escapeHtml(p)}</p>`;
-    }).join('');
+    return rawParagraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
   }
 
   // Sort vocab terms by length descending to avoid partial matches on multi-word phrases
@@ -67,8 +64,7 @@ export function formatPageContent(rawText: string, vocabList: VocabItem[]): stri
       });
     });
 
-    const cls = idx === 0 ? 'first-letter-cap' : '';
-    return `<p class="${cls}">${paragraphHtml}</p>`;
+    return `<p>${paragraphHtml}</p>`;
   }).join('');
 }
 

@@ -352,16 +352,7 @@ button {
   text-indent: 0;
 }
 
-.first-letter-cap::first-letter {
-  font-size: 4rem;
-  font-weight: 600;
-  line-height: 1;
-  float: left;
-  margin-right: 0.5rem;
-  margin-top: 0.2rem;
-  color: var(--on-surface);
-  initial-letter: 2;
-}
+
 
 /* --- Vocabulary Highlight (yellow highlighter) --- */
 .vocab-highlight {
