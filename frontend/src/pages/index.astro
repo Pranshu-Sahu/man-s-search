@@ -86,20 +86,22 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
       readingTextEl.innerHTML = htmlContent;
     }
 
-    // 3. Update Chapter Label & Title
-    const chapterLabelEl = document.querySelector('.chapter-label');
-    const chapterTitleEl = document.querySelector('.chapter-title');
-    if (chapterLabelEl && chapterTitleEl) {
-      if (pageNum <= 5) {
-        chapterLabelEl.textContent = 'Part One';
-        chapterTitleEl.textContent = 'Experiences in a Concentration Camp';
-      } else if (pageNum >= 93) {
-        chapterLabelEl.textContent = 'Part Two';
-        chapterTitleEl.textContent = 'Logotherapy in a Nutshell';
-      } else {
-        chapterLabelEl.textContent = `Page ${pageNum}`;
-        chapterTitleEl.textContent = "Man's Search for Meaning";
-      }
+    // 3. Show chapter header only on the first page of each part
+    const chapterHeaderEl = document.querySelector('.chapter-header') as HTMLElement | null;
+    const chapterLabelEl  = document.querySelector('.chapter-label');
+    const chapterTitleEl  = document.querySelector('.chapter-title');
+
+    if (pageNum === 1) {
+      if (chapterHeaderEl) chapterHeaderEl.style.display = '';
+      if (chapterLabelEl)  chapterLabelEl.textContent  = 'Part One';
+      if (chapterTitleEl)  chapterTitleEl.textContent  = 'Experiences in a Concentration Camp';
+    } else if (pageNum === 93) {
+      if (chapterHeaderEl) chapterHeaderEl.style.display = '';
+      if (chapterLabelEl)  chapterLabelEl.textContent  = 'Part Two';
+      if (chapterTitleEl)  chapterTitleEl.textContent  = 'Logotherapy in a Nutshell';
+    } else {
+      // Mid-chapter page — hide the header entirely
+      if (chapterHeaderEl) chapterHeaderEl.style.display = 'none';
     }
 
     // 4. Update Header Progress & Page Info
