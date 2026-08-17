@@ -9,6 +9,11 @@ const progressPercent = Math.round((currentPage / totalPages) * 100);
 ---
 
 <header class="reading-header" id="reading-header">
+  <!-- Reading Progress Bar (Flush at the top) -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-bar" style={`width: ${progressPercent}%;`}></div>
+  </div>
+
   <div class="header-content">
     <a class="header-back-link" href="#">
       <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
@@ -23,10 +28,5 @@ const progressPercent = Math.round((currentPage / totalPages) * 100);
         <span class="material-symbols-outlined">settings</span>
       </button>
     </div>
-  </div>
-
-  <!-- Reading Progress Bar -->
-  <div class="progress-track">
-    <div class="progress-fill" id="progress-bar" style={`width: ${progressPercent}%;`}></div>
   </div>
 </header>

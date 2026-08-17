@@ -107,28 +107,3 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
   }
 </style>
 
-<script>
-  // Enable instant dropdown navigation
-  const pageSelect = document.getElementById('page-select') as HTMLSelectElement;
-  if (pageSelect) {
-    pageSelect.addEventListener('change', (e) => {
-      const val = (e.target as HTMLSelectElement).value;
-      window.location.href = `?page=${val}`;
-    });
-  }
-
-  // Support Keyboard Left/Right Arrow Navigation
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-      const prevBtn = document.getElementById('btn-prev-page') as HTMLAnchorElement;
-      if (prevBtn && !prevBtn.classList.contains('disabled')) {
-        prevBtn.click();
-      }
-    } else if (e.key === 'ArrowRight') {
-      const nextBtn = document.getElementById('btn-next-page') as HTMLAnchorElement;
-      if (nextBtn && !nextBtn.classList.contains('disabled')) {
-        nextBtn.click();
-      }
-    }
-  });
-</script>
