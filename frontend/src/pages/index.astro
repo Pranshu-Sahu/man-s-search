@@ -205,6 +205,10 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
     const url = new URL(window.location.href);
     url.searchParams.set('page', String(pageNum));
     window.history.pushState({}, '', url.toString());
+
+    // Save progress to localStorage (Auto-Resume)
+    localStorage.setItem('novel_last_read_page', String(pageNum));
+
     renderPage(pageNum);
 
     // Scroll back to top of scrapbook card
@@ -216,7 +220,30 @@ const initialHtml = formatPageContent(activePageData.text, activeVocab);
 
   // Initialize page & listeners on DOM ready
   document.addEventListener('DOMContentLoaded', () => {
-    const initialPage = getPageNumberFromUrl();
+    let initialPage = 1;
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('page')) {
+      // 1. URL priority
+      initialPage = parseInt(params.get('page') || '1', 10);
+      if (isNaN(initialPage) || initialPage < 1) initialPage = 1;
+      if (initialPage > totalPages) initialPage = totalPages;
+      localStorage.setItem('novel_last_read_page', String(initialPage));
+    } else {
+      // 2. Fallback to localStorage (Auto-Resume)
+      const savedPage = localStorage.getItem('novel_last_read_page');
+      if (savedPage) {
+        initialPage = parseInt(savedPage, 10);
+        if (isNaN(initialPage) || initialPage < 1) initialPage = 1;
+        if (initialPage > totalPages) initialPage = totalPages;
+
+        // Sync URL to match saved page without history push
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', String(initialPage));
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+
     renderPage(initialPage);
 
     // Close modal on overlay click or close button
