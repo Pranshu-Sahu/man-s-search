@@ -1,5 +1,5 @@
 ---
-// PageFooter.astro — Cursive page number with tildes
+// PageHeader.astro — Cursive page number with tildes
 interface Props {
   pageNumber: number;
 }
@@ -7,6 +7,6 @@ interface Props {
 const { pageNumber } = Astro.props;
 ---
 
-<footer class="page-footer">
+<header class="page-header">
   <span class="page-number">~ {pageNumber} ~</span>
-</footer>
+</header>
